@@ -14,21 +14,6 @@ NuGet package manager:
 dotnet CLI:
 `dotnet add package Slin.MaskEngine --version 1.0.2	`
 
-## Mask Format
-The built in mask format would be like `L4*6R4`, which means keep 4 of left and 4 of right part of the input string and mask the middle part with 6 `*`. 
-
-**Examples:**
-
-|Input String|Mask Format|Mask Result|
-|:---:|-------|--------|
-|12345678901234| `L4*6R4` | `1234******1234` |
-|1234567890| `L4*6?R4` | `1234**7890` |
-|Shawn| `L2*4R0` | `Sh****` |
-
-Here are some exaples:
-For bank account number, which is 16 digits usually, we'd like to use `L4*8R4`;
-For FirstName or LastName, we'd like to use `L2*4R0`
-
 ## Usage Introduction
 It's really simple that in most case you only need to:
 * Initialized a global/singleton MaskEngine instance
@@ -101,6 +86,21 @@ Here, I got it enhanced that allow adding customized key-value name. Below is th
                 .Add(new KeyValPair("customkey".ToLower(), "customvalue".ToLower()));
 ```
 
+**Explain of Mask Format**
+The built in mask format would be like `L4*6R4`, which means keep 4 of left and 4 of right part of the input string and mask the middle part with 6 `*`. 
+
+**Examples:**
+
+|Input String|Mask Format|Mask Result|
+|:---:|-------|--------|
+|12345678901234| `L4*6R4` | `1234******1234` |
+|1234567890| `L4*6?R4` | `1234**7890` |
+|Shawn| `L2*4R0` | `Sh****` |
+
+Here are some exaples:
+For bank account number, which is 16 digits usually, we'd like to use `L4*8R4`;
+For FirstName or LastName, we'd like to use `L2*4R0`
+
 ### Mask string, serialized Json or XML document
 In MaskEngine it provided following APIs:
 * Mask(string name, string value)
@@ -109,7 +109,6 @@ In MaskEngine it provided following APIs:
 For Url, it might be like https://tainisoft.com/username/shawn/lastname/lin?email=admin@admin.com , this case we may espect that firstname, lastname and email got masked.
 
 BUT, actually, I think `MaskObjectString` is the most powerful method that you can benifit from it.
-
 
 # Examples
 
@@ -163,10 +162,3 @@ public class LogKeys{
 
 # Others
 For more details, please check the properties of MaskEngineConfiguration. And please email to me if you have any questions and suggestions.
-
-Thanks you!
-
-
-
-
-
