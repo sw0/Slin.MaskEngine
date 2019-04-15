@@ -24,9 +24,11 @@ For FirstName or LastName, we'd like to use `L2*4R0`
 ## Usage Introduction
 It's really simple that in most case you only need to:
 * Initialized a global/singleton MaskEngine instance
-* Define the profile that which kinds of names should be masked and masked in which way by adding `MaskAttribute` to your fields/properties.
+* Define the mask profile that which kinds of names should be masked and masked in which way by adding `MaskAttribute` to your fields/properties.
 * Call APIs to mask the string
-** Normaully, you can pass the request body, response body of Json or Xml/Soap directly to MaskObjectString, which will mask everything on the fly as long as you get MaskProfile setup.
+** Normaully, you can pass the request body, response body of Json or Xml/Soap directly to `MaskEngine.MaskObjectString`, which will mask everything on the fly as long as you get MaskProfile setup.
+
+**NOTE** A global instance/singleton instance of `MaskEngine` is suggested if the Maskconfiguration is same.
 
 ### define and enable Mask Profile
 Mask profile can be defined:
@@ -68,7 +70,7 @@ Mask profile can be defined:
 ```
 
 2. by setting `MaskProfileFactory`
-NOTE: the profile is case-insensitive!
+
 ```csharp
             maskEngine.Configuration.MaskProfileFactory = () =>
             {
@@ -80,6 +82,7 @@ NOTE: the profile is case-insensitive!
             };
             maskEngine.UseProfile<LogKeys>().FinalizeConfiguration();
 ```
+**NOTE**: a) the profile is case-insensitive! b) after set `MaskEngineConfiguration.MaskProfileFactory`, you need to explictly call `FinalizeConfiguration()` to finalize the configuration. c) If Mask Profile got set `UseProfile<T>()` alreay and you also use `MaskEngineConfiguration.MaskProfileFactory`, duplicated mask profile item would be ignored inside `FinalizeConfiguration()`.
 
 3. Special cases
 We usually like to use key-value-pair list to passing options/parameters, and some of them may got sensitive information in it. by default, name with "key" and value with name of "value" (case in-sensitive) will be processed. For example, key with name like "AccountNumber" will be masked once your mask profile get it set.
@@ -101,8 +104,6 @@ BUT, actually, I think `MaskObjectString` is the most powerful method that you c
 
 
 # Examples
-
-
 
 # Source code
 ```csharp
@@ -137,7 +138,50 @@ BUT, actually, I think `MaskObjectString` is the most powerful method that you c
 
 Example of code:
 ```csharp
+static IMaskEngine MyMaskEngine;
+static void Main{
+        var maskEngine = new MaskEngine();
+        #region custom configurations
+        maskEngine.Configuration.KeyNameValueNameList
+            .Add(new KeyValPair("customkey".ToLower(), "customvalue".ToLower()));
+        maskEngine.Configuration.JsonStringOrXmlStringContentKeyNameChecker = (name, context) =>
+        {
+            return ",response_body,response_content,simple_json_str_bad,simple_xml_str_bad,simple_xml_kvp_str_bad,"
+            .Contains("," + name.ToLower() + ",");
+        };
+        maskEngine.Configuration.MaskProfileFactory = () =>
+        {
+            return new Dictionary<string, MaskAttribute>
+            {
+                ["mykey1"] = new MaskAttribute() { MaskFormat = "L4$4?R4" },
+                ["mykey1"] = new MaskAttribute() { MaskFormat = "L0#4?R0" },
+            };
+        };
+        #endregion
+        maskEngine.UseProfile<LogKeys>().FinalizeConfiguration();
+        
+        MyMaskEngine = maskEngine;
+        
+        //samples
+        SimpleStringSample();
+}
 
+void SimpleStringSample(){
+     var masked = MyMaskEngine("firstname", "Shawn");
+     Console.WriteLine(masked);  //got "Sh***"
+}
+void JsonStringSample(){
+     var json = "{\"firstname\":\"Shawn\",\"lastname\":\"lin\", \"options\":[{\"key\":\"ssn\",\"value\":\"123456789\"}]}";
+     var masked = MyMaskEngine.MaskObjectString(json);
+}
+
+void XmlStringSample(){
+
+}
+
+public class LogKeys{
+    //... check section # define and enable Mask Profile
+}
 
 ```
 
