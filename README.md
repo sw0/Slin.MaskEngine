@@ -5,6 +5,14 @@ This is a library developed in C# and target for .NET Framework and .NET Core. I
 In services, there are a lot calls from one to another, or 3rd party services. We need to trace the request traffic, it's commonly RESTful API calls, WCF calls. We need to get it logged into logging system, that would be helpful for aduit or troubleshooting. However, there are some sensitive information on production, we should not get it logged as plain text. So we need to mask the sensitive values. That is the main purpurse of this project that to provide a flexiable MaskEngine to mask the sensitive values for the payload in traffics.
 
 # Introduction
+Slin.MaskEngine got published as a nuget package. So you can install it by command or by VS Nuget Package Manager.
+https://www.nuget.org/packages/Slin.MaskEngine
+
+NuGet package manager:
+`PM> Install-Package Slin.MaskEngine -Version 1.0.2`
+
+dotnet CLI:
+`dotnet add package Slin.MaskEngine --version 1.0.2	`
 
 ## Mask Format
 The built in mask format would be like `L4*6R4`, which means keep 4 of left and 4 of right part of the input string and mask the middle part with 6 `*`. 
