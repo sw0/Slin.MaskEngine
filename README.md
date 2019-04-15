@@ -10,11 +10,12 @@ In services, there are a lot calls from one to another, or 3rd party services. W
 The built in mask format would be like `L4*6R4`, which means keep 4 of left and 4 of right part of the input string and mask the middle part with 6 `*`. 
 
 **Examples:**
+
 |Input String|Mask Format|Mask Result|
-|:---:|---|---|
-|12345678901234|`L4*6R4`|`1234******1234`|
-|1234567890|`L4*6?R4`|`1234**7890`|
-|Shawn|`L2*4R0`|`Sh****`|
+|:---:|-------|--------|
+|12345678901234| `L4*6R4` | `1234******1234` |
+|1234567890| `L4*6?R4` | `1234**7890` |
+|Shawn| `L2*4R0` | `Sh****` |
 
 Here are some exaples:
 For bank account number, which is 16 digits usually, we'd like to use `L4*8R4`;
