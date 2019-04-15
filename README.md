@@ -113,38 +113,6 @@ BUT, actually, I think `MaskObjectString` is the most powerful method that you c
 
 # Examples
 
-# Source code
-```csharp
-    public interface IMaskEngine
-    {
-        IMaskEngineConfiguration Configuration { get; }
-
-        /// <summary>
-        /// should be called after customized configuration got set,
-        /// not been called if got custom configuration, some function may not working well.
-        /// </summary>
-        /// <returns></returns>
-        IMaskEngine FinalizeConfiguration();
-
-        bool IsNameInMaskList(string name);
-
-        string Mask(string name, string value);
-
-        string MaskObjectString(string serializedString);
-
-        string MaskUrl(Uri uri, bool processSegements = true);
-        
-        /// <summary>
-        /// Use a class with properties/fields got MaskAttribute setting
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        IMaskEngine UseProfile<T>() where T : class;
-    }
-```
-
-
-Example of code:
 ```csharp
 static IMaskEngine MyMaskEngine;
 static void Main(){
