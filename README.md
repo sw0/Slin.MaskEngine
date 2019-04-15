@@ -28,8 +28,83 @@ It's really simple that in most case you only need to:
 * Call APIs to mask the string
 ** Normaully, you can pass the request body, response body of Json or Xml/Soap directly to MaskObjectString, which will mask everything on the fly as long as you get MaskProfile setup.
 
+### define and enable Mask Profile
+Mask profile can be defined:
+1. by a class, which got fields/properties with `MaskAttribute` applied with corresponding mask setting
+```csharp
 
-# Some code
+    public class LogKeys
+    {
+        [MaskAttribute(MaskFormat = "L4*8R4", FilterPattern = "\\d{16}")]
+        public string AccountReference = "AccountReference";
+
+        [MaskAttribute(MaskFormat = "*14")]
+        public string Pin = "pin";
+
+        [MaskAttribute(MaskFormat = "L4*8R4")]
+        public string AccountNumber = "AccountNumber";
+
+        [MaskAttribute(MaskFormat = "L0*6R3")]
+        public string Ssn = "SSN";
+        [MaskAttribute(MaskFormat = "L0*6R3")]
+        public string SocialSecurityNumber = "SocialSecurityNumber";
+        
+        public string ClientIp = "ClientIp";
+        public string ServerName = "ServerName";
+        [MaskAttribute(MaskFormat = "L2*8?R0")]
+        public string FirstName = "FirstName";
+        [MaskAttribute(MaskFormat = "L2*8?R0")]
+        public string LastName = "LastName";
+        [MaskAttribute(MaskFormat = "L3*4R4")]
+        public string PhoneNumber = "LastName";
+
+        //TODO may got different formats
+        [MaskAttribute(Replacement = "1970-01-01T00:00:00")]
+        public string DateOfBirth = "DateOfBirth";
+
+        [MaskAttribute(MaskFormat = "*6")]
+        public string Password = "Password";
+    }
+```
+
+2. by setting `MaskProfileFactory`
+NOTE: the profile is case-insensitive!
+```csharp
+            maskEngine.Configuration.MaskProfileFactory = () =>
+            {
+                return new Dictionary<string, MaskAttribute>
+                {
+                    ["mykey1"] = new MaskAttribute() { MaskFormat = "L4$4?R4" },
+                    ["mykey1"] = new MaskAttribute() { MaskFormat = "L0#4?R0" },
+                };
+            };
+            maskEngine.UseProfile<LogKeys>().FinalizeConfiguration();
+```
+
+3. Special cases
+We usually like to use key-value-pair list to passing options/parameters, and some of them may got sensitive information in it. by default, name with "key" and value with name of "value" (case in-sensitive) will be processed. For example, key with name like "AccountNumber" will be masked once your mask profile get it set.
+Here, I got it enhanced that allow adding customized key-value name. Below is the example:
+
+```csharp
+            maskEngine.Configuration.KeyNameValueNameList
+                .Add(new KeyValPair("customkey".ToLower(), "customvalue".ToLower()));
+```
+
+### Mask string, serialized Json or XML document
+In MaskEngine it provided following APIs:
+* Mask(string name, string value)
+* MaskObjectString(string serializedString)
+* MaskUrl(Uri uri, bool processSegemets = true)
+For Url, it might be like https://tainisoft.com/username/shawn/lastname/lin?email=admin@admin.com , this case we may espect that firstname, lastname and email got masked.
+
+BUT, actually, I think `MaskObjectString` is the most powerful method that you can benifit from it.
+
+
+# Examples
+
+
+
+# Source code
 ```csharp
     public interface IMaskEngine
     {
@@ -61,7 +136,9 @@ It's really simple that in most case you only need to:
 
 
 Example of code:
-```
+```csharp
+
+
 ```
 
 
