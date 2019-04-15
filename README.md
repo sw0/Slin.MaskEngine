@@ -139,7 +139,7 @@ BUT, actually, I think `MaskObjectString` is the most powerful method that you c
 Example of code:
 ```csharp
 static IMaskEngine MyMaskEngine;
-static void Main{
+static void Main(){
         var maskEngine = new MaskEngine();
         #region custom configurations
         maskEngine.Configuration.KeyNameValueNameList
@@ -184,6 +184,12 @@ public class LogKeys{
 }
 
 ```
+
+# Others
+For more details, please check the properties of MaskEngineConfiguration. And please email to me if you have any questions and suggestions.
+
+Thanks you!
+
 
 
 
